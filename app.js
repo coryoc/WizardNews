@@ -7,6 +7,14 @@ const app = express();
 app.use(express.static('public')) 
 app.use(morgan('dev'))
 
+
+app.use((err, req, res, next) => {
+  console.error(err.stack)
+  res.status(500).send('Something broke!')
+})
+
+
+
 app.get("/", (req, res) => 
    {
     const posts = postBank.list();
@@ -39,7 +47,7 @@ app.get("/", (req, res) =>
       res.send(html)
    });
 
-   app.get('/posts/:id', (req, res) => {
+   app.get('/posts/:id', (req, res, next) => {
     const id = req.params.id;
     const post = postBank.find(id);
 
@@ -65,8 +73,35 @@ app.get("/", (req, res) =>
     </body>
   </html>`
 
+  const errorPage = `<!DOCTYPE html>
+  <html>
+  <head>
+    <title>Wizard News</title>
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body>
+    <div class="news-list">
+      <header><img src="/logo.png"/>Wizard News</header>
+        <div class='news-item'>
+          <p>
+            404 ERROR!!!!
+          </p>
+        </div>
+    </div>
+  </body>
+</html>`
 
-    res.send(html);
+  if (post.id) {
+
+    res.status(200).send(html)
+  }
+  // else if {
+
+  // }
+  else {
+    res.status(404).send(errorPage)
+  }
+
   });
 
 
