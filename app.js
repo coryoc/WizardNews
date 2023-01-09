@@ -8,12 +8,6 @@ app.use(express.static('public'))
 app.use(morgan('dev'))
 
 
-app.use((err, req, res, next) => {
-  console.error(err.stack)
-  res.status(500).send('Something broke!')
-})
-
-
 
 app.get("/", (req, res) => 
    {
@@ -84,7 +78,7 @@ app.get("/", (req, res) =>
       <header><img src="/logo.png"/>Wizard News</header>
         <div class='news-item'>
           <p>
-            404 ERROR!!!!
+            404 - Page Not Found
           </p>
         </div>
     </div>
@@ -95,9 +89,8 @@ app.get("/", (req, res) =>
 
     res.status(200).send(html)
   }
-  // else if {
 
-  // }
+  
   else {
     res.status(404).send(errorPage)
   }
@@ -106,19 +99,14 @@ app.get("/", (req, res) =>
 
 
 
-  app.get('/posts/:id', (req, res) => {
-    const id = req.params.id
-    const post = find(id)
-    if (!post.id) {
-      throw new Error('Not Found')
-    }
+  app.use((error, req, res, next) => {
+    console.error(error)
+    res.status(404).send('Page Not Found')
   })
-  ;
-  // TODO - create error handler responding with 404 status code and Not Found after reading https://expressjs.com/en/guide/error-handling.html and associated resources
-
+  
 
  
-const PORT = 1337;
+  const { PORT = 1337 } = process.env;
 
 app.listen(PORT, () => {
   console.log(`App listening in port ${PORT}`);
